@@ -3,5 +3,5 @@ A web scraper which sends email and text notifications regarding the current fre
 ## What I Learned
 * Using Selinium to automatically load and navigate a web browser
 * Scraping data from HTML elements
-* Auomating Emails using smtp
+* Automating Emails using smtp
 * Automating text messages using Twilio
