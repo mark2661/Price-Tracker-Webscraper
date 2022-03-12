@@ -15,7 +15,7 @@ from twilio.rest import Client
 
 
 def send_email(message, email_address, email_password, recipients_emails):
-    # Send weekly emails to personal account from a dummy account (freeGameAutomated@outlook.com)
+    # Send weekly emails to personal account from a dummy account
     try:
         import smtplib
         smtpObj = smtplib.SMTP('smtp-mail.outlook.com', 587)
@@ -23,7 +23,7 @@ def send_email(message, email_address, email_password, recipients_emails):
         smtpObj.starttls()
         smtpObj.login(email_address, email_password)
         for user_email_address in recipients_emails:
-            smtpObj.sendmail('freeGameAutomated@outlook.com', user_email_address,
+            smtpObj.sendmail(email_address, user_email_address,
                              "Subject: This weeks free epic game \n" + message)
         smtpObj.quit()
     except:
