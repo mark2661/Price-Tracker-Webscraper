@@ -2,24 +2,27 @@
 # free_game.py
 # finds this weeks free game on the Epic game store and prints it to a .txt file along with the valid date
 
-from selenium import webdriver
-import time, os, datetime
 
+import time
+import os
+import datetime
+import argparse
+import chromedriver_autoinstaller
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from twilio.rest import Client
-import chromedriver_autoinstaller
 
 
-def send_email(message, user_email_addresses):
+def send_email(message, email_address, email_password, recipients_emails):
     # Send weekly emails to personal account from a dummy account (freeGameAutomated@outlook.com)
     try:
         import smtplib
         smtpObj = smtplib.SMTP('smtp-mail.outlook.com', 587)
         smtpObj.ehlo()
         smtpObj.starttls()
-        smtpObj.login('freeGameAutomated@outlook.com', 'Fallout76')
-        for user_email_address in user_email_addresses:
+        smtpObj.login(email_address, email_password)
+        for user_email_address in recipients_emails:
             smtpObj.sendmail('freeGameAutomated@outlook.com', user_email_address,
                              "Subject: This weeks free epic game \n" + message)
         smtpObj.quit()
@@ -29,7 +32,7 @@ def send_email(message, user_email_addresses):
         text_file.write('**Email for log above failed to send (Date: {})**'.format(today.strftime('%d/%m/%Y')))
 
 
-def send_text(message, user_phone_number):
+def send_text(message, user_phone_number):  # function needs fixing
     try:
         accountSID = 'AC06167f5101f43014f24c33686efb2f84'
         authToken = '390e192cb8b9fe03e0b4717fbffaa231'
@@ -56,12 +59,18 @@ def update_log():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--email-address', type=str, required=True)
+    parser.add_argument('--email-password', type=str, required=True)
+    parser.add_argument('--email-list', nargs='+', required=True)
+    args = parser.parse_args()
+
     # set CWD
     os.chdir(os.path.join(os.getcwd(), 'chrome-drivers'))
 
     # user details
-    USER_EMAILS = ['mxc629@student.bham.ac.uk']
-    USER_PHONE_NUMBER = '+447889127683'
+    USER_EMAILS = args.email_list
+    # USER_PHONE_NUMBER = None
 
     # create web driver object
     chromedriver_autoinstaller.install(True)
@@ -85,7 +94,7 @@ if __name__ == "__main__":
     # update log and send user messages
     update_log()
     send_email(message, USER_EMAILS)
-    send_text(message, USER_PHONE_NUMBER)
+    # send_text(message, USER_PHONE_NUMBER)
 
     # close driver object
     driver.quit()
